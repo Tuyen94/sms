@@ -4,4 +4,5 @@ import tuyen.bui.sms.domain.order.model.Order;
 
 public interface OrderRepository {
     Order save(Order order);
+    Order findById(long id);
 }
