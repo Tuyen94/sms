@@ -9,7 +9,7 @@ import java.util.List;
 public class Order {
     private long orderId;
     private long accountId;
-    private String status;
+    private OrderStatus status;
     private long amount;
     private LocalDateTime createdTime;
     private List<ProductItem> productItemList;

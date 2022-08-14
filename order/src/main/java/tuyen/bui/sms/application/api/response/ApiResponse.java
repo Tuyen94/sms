@@ -6,21 +6,17 @@ import tuyen.bui.sms.domain.common.error.ErrorCode;
 
 @Data
 @NoArgsConstructor
-public class ApiResponse extends BaseResponse {
+public class ApiResponse<T> extends BaseResponse {
 
-    private Object data;
+    private T data;
 
-    public ApiResponse(String code, String message, Object data) {
+    public ApiResponse(String code, String message, T data) {
         super(code, message);
         this.data = data;
     }
 
-    public ApiResponse(ErrorCode errorCode, Object data) {
+    public ApiResponse(ErrorCode errorCode, T data) {
         super(errorCode);
         this.data = data;
-    }
-
-    public static ApiResponse successResponse(Object data) {
-        return new ApiResponse(ErrorCode.SUCCESS, data);
     }
 }

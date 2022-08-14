@@ -3,25 +3,26 @@ package tuyen.bui.sms.application.api.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import tuyen.bui.sms.application.api.dto.OrderDto;
 import tuyen.bui.sms.application.api.response.ApiResponse;
-import tuyen.bui.sms.domain.order.model.Order;
-import tuyen.bui.sms.domain.order.repository.OrderRepository;
+import tuyen.bui.sms.application.service.OrderAppService;
+import tuyen.bui.sms.domain.common.error.ErrorCode;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class OrderController {
 
-    private final OrderRepository orderRepository;
+    private final OrderAppService orderAppService;
 
     @PostMapping(path = "/orders")
-    public ApiResponse createOrder(@RequestBody Order order) {
-        return ApiResponse.successResponse(orderRepository.save(order));
+    public ApiResponse<OrderDto> createOrder(@RequestBody OrderDto order) {
+        return new ApiResponse<>(ErrorCode.SUCCESS, orderAppService.createOrder(order));
     }
 
     @GetMapping(path = "/orders/{id}")
-    public ApiResponse getOrder(@PathVariable long id) {
+    public ApiResponse<OrderDto> getOrder(@PathVariable long id) {
         log.info("Get order " + id);
-        return ApiResponse.successResponse(orderRepository.findById(id));
+        return new ApiResponse<>(ErrorCode.SUCCESS, orderAppService.getOrder(id));
     }
 }
