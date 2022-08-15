@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import tuyen.bui.sms.application.api.dto.OrderDto;
 import tuyen.bui.sms.application.api.response.ApiResponse;
+import tuyen.bui.sms.common.Transaction;
 import tuyen.bui.sms.application.service.OrderAppService;
 import tuyen.bui.sms.domain.common.error.ErrorCode;
 
@@ -17,7 +18,7 @@ public class OrderController {
 
     @PostMapping(path = "/orders")
     public ApiResponse<OrderDto> createOrder(@RequestBody OrderDto order) {
-        return new ApiResponse<>(ErrorCode.SUCCESS, orderAppService.createOrder(order));
+        return new ApiResponse<>(ErrorCode.SUCCESS, Transaction.execute(orderAppService::createOrder, order));
     }
 
     @GetMapping(path = "/orders/{id}")

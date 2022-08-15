@@ -8,6 +8,8 @@ import tuyen.bui.sms.domain.order.error.OrderError;
 import tuyen.bui.sms.domain.order.model.Order;
 import tuyen.bui.sms.domain.order.model.OrderStatus;
 import tuyen.bui.sms.domain.order.repository.OrderRepository;
+import tuyen.bui.sms.infrastructure.persistance.entity.OrderOutboxEntity;
+import tuyen.bui.sms.infrastructure.persistance.repository.jpa.OrderOutboxRepositoryJpa;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -15,15 +17,20 @@ import tuyen.bui.sms.domain.order.repository.OrderRepository;
 public class OrderAppService {
 
     private final OrderRepository orderRepository;
+    private final OrderOutboxRepositoryJpa outboxRepository;
 
     public OrderDto createOrder(OrderDto orderDto) {
         try {
             Order order = orderDto.toOrder();
             if (order.getStatus() != OrderStatus.CREATED) {
+                log.error("Status is not CREATED");
                 throw OrderError.createOrderError();
             }
-            return OrderDto.from(orderRepository.save(order));
+            order = orderRepository.save(order);
+            outboxRepository.save(OrderOutboxEntity.from(order));
+            return OrderDto.from(order);
         } catch (Exception e) {
+            log.error("Create order error!", e);
             throw OrderError.createOrderError();
         }
     }
