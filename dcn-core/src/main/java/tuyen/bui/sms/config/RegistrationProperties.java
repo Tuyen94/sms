@@ -2,9 +2,6 @@ package tuyen.bui.sms.config;
 
 import lombok.Data;
 import oracle.jdbc.OracleConnection;
-import oracle.jdbc.dcn.DatabaseChangeListener;
-import tuyen.bui.sms.listener.RowChangeListener;
-import tuyen.bui.sms.until.ApplicationUntil;
 
 import java.util.Properties;
 
@@ -12,9 +9,7 @@ import java.util.Properties;
 public class RegistrationProperties {
     private String port;
     private String associateQuery;
-    private String rowChangeListener;
-    private String beforeRegisterListener;
-    private String afterRegisterListener;
+    private String listener;
     private String queryChange = "true";
 
     public Properties generateProperties() {
@@ -36,9 +31,5 @@ public class RegistrationProperties {
             }
         }
         return properties;
-    }
-
-    public RowChangeListener getRowChangeListener() {
-        return (RowChangeListener) ApplicationUntil.getBean(rowChangeListener);
     }
 }

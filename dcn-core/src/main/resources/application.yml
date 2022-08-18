@@ -18,8 +18,5 @@ dcn:
       operations:
         - INSERT
       associate-query: "select * from order_outbox"
-      row-change-listener: orderOutboxListener
-      before-register-listener: orderOutboxListener
-      after-register-listener: orderOutboxListener
+      listener: orderOutboxListener
       query-change: false
-
