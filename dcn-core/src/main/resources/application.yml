@@ -14,9 +14,9 @@ spring:
 dcn:
   default-port: 1234
   registrations:
-    - port: 1234
+    - port: 47757
       operations:
         - INSERT
       associate-query: "select * from order_outbox"
       listener: orderOutboxListener
-      query-change: false
+      query-change: true

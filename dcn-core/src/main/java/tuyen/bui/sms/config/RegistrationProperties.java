@@ -3,11 +3,13 @@ package tuyen.bui.sms.config;
 import lombok.Data;
 import oracle.jdbc.OracleConnection;
 
+import java.util.List;
 import java.util.Properties;
 
 @Data
 public class RegistrationProperties {
     private String port;
+    private List<String> operations;
     private String associateQuery;
     private String listener;
     private String queryChange = "true";
@@ -19,14 +21,14 @@ public class RegistrationProperties {
         if (port != null) {
             properties.setProperty(OracleConnection.NTF_LOCAL_TCP_PORT, port);
         }
-        if (associateQuery != null) {
-            if (!associateQuery.contains("INSERT")) {
+        if (operations != null) {
+            if (!operations.contains("INSERT")) {
                 properties.setProperty(OracleConnection.DCN_IGNORE_INSERTOP, "true");
             }
-            if (!associateQuery.contains("UPDATE")) {
+            if (!operations.contains("UPDATE")) {
                 properties.setProperty(OracleConnection.DCN_IGNORE_UPDATEOP, "true");
             }
-            if (!associateQuery.contains("DELETE")) {
+            if (!operations.contains("DELETE")) {
                 properties.setProperty(OracleConnection.DCN_IGNORE_DELETEOP, "true");
             }
         }
