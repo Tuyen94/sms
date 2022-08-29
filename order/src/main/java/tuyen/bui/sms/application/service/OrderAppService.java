@@ -2,11 +2,14 @@ package tuyen.bui.sms.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 import tuyen.bui.sms.application.api.dto.OrderDto;
 import tuyen.bui.sms.application.kafka.producer.KafkaProducer;
 import tuyen.bui.sms.application.properties.KafkaProperties;
+import tuyen.bui.sms.domain.event.OrderApplicationEvent;
 import tuyen.bui.sms.domain.order.error.OrderError;
 import tuyen.bui.sms.domain.order.model.Order;
 import tuyen.bui.sms.domain.order.model.OrderStatus;
@@ -23,7 +26,7 @@ public class OrderAppService {
     private final OrderOutboxRepositoryJpa outboxRepository;
     private final KafkaProducer kafkaProducer;
     private final KafkaProperties kafkaProperties;
-
+    private final ApplicationEventPublisher applicationEventPublisher;
     public OrderDto createOrder(OrderDto orderDto) {
         try {
             Order order = orderDto.toOrder();
@@ -32,7 +35,10 @@ public class OrderAppService {
                 throw OrderError.createOrderError();
             }
             order = orderRepository.save(order);
-            outboxRepository.save(OrderOutboxEntity.from(order));
+            OrderOutboxEntity orderOutbox = OrderOutboxEntity.from(order);
+            outboxRepository.save(orderOutbox);
+            OrderApplicationEvent event = new OrderApplicationEvent(order, orderOutbox);
+            applicationEventPublisher.publishEvent(event);
             return OrderDto.from(order);
         } catch (Exception e) {
             log.error("Create order error!", e);
@@ -48,7 +54,10 @@ public class OrderAppService {
         }
     }
 
-    public void sendOrderEvent(Order order, OrderOutboxEntity orderOutbox) {
+    @TransactionalEventListener
+    public void sendOrderEvent(OrderApplicationEvent event) {
+        Order order = (Order) event.getSource();
+        OrderOutboxEntity orderOutbox = event.getOrderOutbox();
         ListenableFutureCallback<Object> callback = new ListenableFutureCallback<>() {
             @Override
             public void onFailure(Throwable ex) {
@@ -61,7 +70,7 @@ public class OrderAppService {
                 updateOrderOutboxStatus(orderOutbox, "S");
             }
         };
-        kafkaProducer.sendMessage(kafkaProperties.getOrderTopic(), String.valueOf(order.getOrderId()), order, callback);
+        kafkaProducer.sendMessage(kafkaProperties.getOrderTopic(), String.valueOf(order.getOrderId()), event.getSource(), callback);
     }
 
     private void updateOrderOutboxStatus(OrderOutboxEntity orderOutbox, String status) {
