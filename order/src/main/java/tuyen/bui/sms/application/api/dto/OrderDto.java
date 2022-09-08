@@ -14,7 +14,6 @@ public class OrderDto {
     private long accountId;
     private String status;
     private long amount;
-    private LocalDateTime createdTime;
     private List<ProductItem> productItemList;
 
     public static OrderDto from(Order order) {
@@ -22,6 +21,8 @@ public class OrderDto {
     }
 
     public Order toOrder() {
-        return ModelMapperUntil.map(this, Order.class);
+        Order order = ModelMapperUntil.map(this, Order.class);
+        order.setCreatedTime(LocalDateTime.now());
+        return order;
     }
 }

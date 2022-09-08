@@ -1,8 +1,7 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@//localhost:1521/ORCLPDB1
-    driver-class-name: oracle.jdbc.OracleDriver
-    username: orderdb
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=orderdb
+    username: postgres
     password: Tuyen1234
     hikari:
       maxLifetime: '2000000'
@@ -15,7 +14,7 @@ spring:
     hibernate:
       use-new-id-generator-mappings: 'false'
 #      ddl-auto: create
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.PostgreSQL81Dialect
     show-sql: true
   kafka:
     consumer:

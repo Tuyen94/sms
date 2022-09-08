@@ -5,3 +5,10 @@ CREATE TABLE order_outbox(
     status VARCHAR2(10),
     PRIMARY KEY(id)
 );
+--
+CREATE TABLE orderdb.order_outbox(
+    id BIGSERIAL PRIMARY KEY,
+    order_id bigint NOT NULL,
+    operation VARCHAR(10),
+    status VARCHAR(10)
+);
