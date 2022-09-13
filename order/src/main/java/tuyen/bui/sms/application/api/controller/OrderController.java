@@ -15,10 +15,11 @@ import tuyen.bui.sms.domain.common.error.ErrorCode;
 public class OrderController {
 
     private final OrderAppService orderAppService;
+    private final Transaction transaction;
 
     @PostMapping(path = "/orders")
     public ApiResponse<OrderDto> createOrder(@RequestBody OrderDto order) {
-        return new ApiResponse<>(ErrorCode.SUCCESS, Transaction.execute(orderAppService::createOrder, order));
+        return new ApiResponse<>(ErrorCode.SUCCESS, transaction.execute(orderAppService::createOrder, order));
     }
 
     @GetMapping(path = "/orders/{id}")

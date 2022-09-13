@@ -27,6 +27,7 @@ public class OrderAppService {
     private final KafkaProducer kafkaProducer;
     private final KafkaProperties kafkaProperties;
     private final ApplicationEventPublisher applicationEventPublisher;
+
     public OrderDto createOrder(OrderDto orderDto) {
         try {
             Order order = orderDto.toOrder();
@@ -37,7 +38,7 @@ public class OrderAppService {
             order = orderRepository.save(order);
             OrderOutboxEntity orderOutbox = OrderOutboxEntity.from(order);
             outboxRepository.save(orderOutbox);
-            OrderApplicationEvent event = new OrderApplicationEvent(order, orderOutbox);
+            OrderApplicationEvent event = new OrderApplicationEvent(orderDto, orderOutbox);
             applicationEventPublisher.publishEvent(event);
             return OrderDto.from(order);
         } catch (Exception e) {
@@ -56,7 +57,8 @@ public class OrderAppService {
 
     @TransactionalEventListener
     public void sendOrderEvent(OrderApplicationEvent event) {
-        Order order = (Order) event.getSource();
+        log.info("sendOrderEvent {}", event);
+        OrderDto order = (OrderDto) event.getSource();
         OrderOutboxEntity orderOutbox = event.getOrderOutbox();
         ListenableFutureCallback<Object> callback = new ListenableFutureCallback<>() {
             @Override
@@ -70,7 +72,7 @@ public class OrderAppService {
                 updateOrderOutboxStatus(orderOutbox, "S");
             }
         };
-        kafkaProducer.sendMessage(kafkaProperties.getOrderTopic(), String.valueOf(order.getOrderId()), event.getSource(), callback);
+        kafkaProducer.sendMessage(kafkaProperties.getOrderTopic(), String.valueOf(order.getOrderId()), order, callback);
     }
 
     private void updateOrderOutboxStatus(OrderOutboxEntity orderOutbox, String status) {
