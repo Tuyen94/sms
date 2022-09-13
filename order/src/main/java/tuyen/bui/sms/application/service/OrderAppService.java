@@ -3,6 +3,7 @@ package tuyen.bui.sms.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.util.concurrent.ListenableFutureCallback;
@@ -55,6 +56,7 @@ public class OrderAppService {
         }
     }
 
+    @Async
     @TransactionalEventListener
     public void sendOrderEvent(OrderApplicationEvent event) {
         log.info("sendOrderEvent {}", event);

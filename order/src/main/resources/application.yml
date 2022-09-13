@@ -30,3 +30,5 @@ spring:
 app:
   kafka:
     order-topic: order.order-created
+  async:
+    core-pool-size: 20
