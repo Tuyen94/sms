@@ -18,17 +18,20 @@ spring:
     show-sql: true
   kafka:
     consumer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: localhost:29092
       group-id: order-service
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
-      bootstrap-servers: localhost:9092
+      bootstrap-servers: localhost:29092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 app:
   kafka:
-    order-topic: order.order-created
+    order-created-topic: order.order-created
+    order-cash-topic: cash-service.order-paid
+    order-warehouses-topic: warehouses.order
+    order-deliver-topic: delivery.order
   async:
     core-pool-size: 20

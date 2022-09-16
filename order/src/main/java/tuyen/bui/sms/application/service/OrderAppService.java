@@ -74,7 +74,7 @@ public class OrderAppService {
                 updateOrderOutboxStatus(orderOutbox, "S");
             }
         };
-        kafkaProducer.sendMessage(kafkaProperties.getOrderTopic(), String.valueOf(order.getOrderId()), order, callback);
+        kafkaProducer.sendMessage(kafkaProperties.getOrderCreatedTopic(), String.valueOf(order.getOrderId()), order, callback);
     }
 
     private void updateOrderOutboxStatus(OrderOutboxEntity orderOutbox, String status) {

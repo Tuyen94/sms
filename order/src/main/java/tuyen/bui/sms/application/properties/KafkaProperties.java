@@ -8,5 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "app.kafka")
 public class KafkaProperties {
-    private String orderTopic;
+    private String orderCreatedTopic;
+    private String orderCashTopic;
+    private String orderWarehousesTopic;
+    private String orderDeliverTopic;
 }
